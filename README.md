@@ -7,6 +7,7 @@ Available both as a terminal app and as a Telegram bot.
 ## Features
 
 - **Natural language input** — "lunch 120", "received salary 30000", "酒吧消費 5 元" all just work
+- **Multiple transactions in one message** — "rent 500, insurance 100" is split and logged as two separate transactions
 - `/balance` — check current balance
 - `/history` — view recent transactions
 - `/report [YYYY-MM]` — spending breakdown by category for a given month (defaults to current month)
@@ -19,7 +20,7 @@ Available both as a terminal app and as a Telegram bot.
 
 ## How it works
 
-Each message is routed through a small [LangGraph](https://github.com/langchain-ai/langgraph) state graph. Slash commands go straight to their handler; anything else is classified by the LLM as an expense or income, with amount/category extracted automatically.
+Each message is routed through a small [LangGraph](https://github.com/langchain-ai/langgraph) state graph. Slash commands go straight to their handler; anything else is classified by the LLM into one or more transactions (expense or income), each with its own amount and category extracted automatically.
 
 ```mermaid
 flowchart LR
@@ -31,7 +32,7 @@ flowchart LR
     R -->|"/report"| MR["monthly_report"]
     R -->|"/category"| CD["category_detail"]
     R -->|"/undo"| UL["undo_last"]
-    R -->|"anything else"| C["classify\n(LLM: expense or income?)"]
+    R -->|"anything else"| C["classify\n(LLM: split into 1+ transactions)"]
     C --> A["apply\n(update balance + log + alert)"]
 
     SB --> END(("reply"))
