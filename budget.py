@@ -35,7 +35,16 @@ from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, START, END
 
 # ===== Configuration =====
-CATEGORIES = ["Food", "Transport", "Entertainment", "Shopping", "Groceries", "Housing", "Medical", "Education", "Other"]
+CATEGORIES = ["Transport", "Entertainment", "Groceries", "Housing", "Medical", "Education", "Other"]
+CATEGORY_HINTS = {
+    "Transport": "taxi, uber, gas/fuel, parking, public transport, flights, train tickets",
+    "Entertainment": "shopping, movies, games, streaming subscriptions, concerts, hobbies, bars, drinks",
+    "Groceries": "food, dining out, restaurants, supermarket, takeout",
+    "Housing": "rent, mortgage, utilities (electricity, water, internet)",
+    "Medical": "health insurance, doctor visits, pharmacy, medicine",
+    "Education": "tuition, books, courses, school supplies",
+    "Other": "anything that doesn't clearly fit another category",
+}
 CURRENCY = "€"
 DEFAULT_BUDGET = 10000.0
 DEFAULT_ALERT_THRESHOLD = 2000.0
@@ -88,8 +97,9 @@ class Transaction(BaseModel):
     type: str = Field(description="expense: money spent; income: money received or deposited")
     amount: float = Field(description="amount, a positive number")
     category: str = Field(
-        description=f"expense category, must be one of: {', '.join(CATEGORIES)}; "
-                    "leave as an empty string if it's income"
+        description="expense category, must be one of: "
+                    + "; ".join(f"{c} ({CATEGORY_HINTS[c]})" for c in CATEGORIES)
+                    + "; leave as an empty string if it's income"
     )
     description: str = Field(description="a short description of the transaction, in English")
 
